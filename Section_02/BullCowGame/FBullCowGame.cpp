@@ -38,7 +38,7 @@ FBullCowCount FBullCowGame::SubmitGuess(FString guess) {
     myCurrentTry++;
     
     FBullCowCount bullCowCount;
-    FString hiddenWord = "ant"; // temporary
+    FString hiddenWord = "temp"; // temporary
     
     for (int32 i = 0; i < hiddenWord.length(); i++) {
         for (int32 j = 0; j < guess.length(); j++) {
