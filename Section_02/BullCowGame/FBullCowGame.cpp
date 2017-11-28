@@ -21,7 +21,7 @@ int32 FBullCowGame::getHiddenWordLength() const { return static_cast<int32>(myHi
 void FBullCowGame::reset() {
     
     constexpr int32 MY_MAX_TRIES = 3;
-    const FString HIDDEN_WORD = "ant";
+    const FString HIDDEN_WORD = "planet";
     
     myMaxTries = MY_MAX_TRIES;
     myHiddenWord = HIDDEN_WORD;
@@ -33,17 +33,19 @@ void FBullCowGame::reset() {
 }
 
 // receives a VALID guess, increments turn, and returns count
-FBullCowCount FBullCowGame::SubmitGuess(FString guess) {
+FBullCowCount FBullCowGame::submitValidGuess(FString guess) {
     
     myCurrentTry++;
     
     FBullCowCount bullCowCount;
-    FString hiddenWord = "temp"; // temporary
+    int32 wordLength = getHiddenWordLength();
     
-    for (int32 i = 0; i < hiddenWord.length(); i++) {
-        for (int32 j = 0; j < guess.length(); j++) {
-            if (hiddenWord[i] == guess[j]) {
-                if (i == j) {
+    // loop through all letters in the hidden word
+    for (int32 hWChar = 0; hWChar < wordLength; hWChar++) {
+        // loop through all letters in the guess
+        for (int32 gChar = 0; gChar < wordLength; gChar++) {
+            if (myHiddenWord[hWChar] == guess[gChar]) {
+                if (hWChar == gChar) {
                     bullCowCount.Bulls++;
                 } else {
                     bullCowCount.Cows++;
@@ -55,8 +57,20 @@ FBullCowCount FBullCowGame::SubmitGuess(FString guess) {
     return bullCowCount;
 }
 
+EGuessStatus FBullCowGame::checkGuessValidity(FString guess) const {
+    
+    if (false) {
+        return EGuessStatus::Not_Isogram;
+    } else if (false) {
+        return EGuessStatus::Not_Lowercase;
+    } else if (guess.length() != getHiddenWordLength()) {
+        return EGuessStatus::Wrong_Length;
+    } else {
+        return EGuessStatus::OK;
+    }
+}
 
 
-
-
-
+bool FBullCowGame::isGameWon() const { 
+    return true;
+}

@@ -59,10 +59,10 @@ void playGame() {
     std::cout << maxTries << std::endl;
     
     for (int32 i = 1; i <= maxTries; i++) {
-        FText guess = getGuess(); // TODO: check for valid guesses
+        FText guess = getValidGuess();
         
         // submit valid guess
-        FBullCowCount bullCowCount = BCGame.SubmitGuess(guess);
+        FBullCowCount bullCowCount = BCGame.submitValidGuess(guess);
         // print numbers of bulls and cows
         std::cout << "Bulls = " << bullCowCount.Bulls << std::endl;
         std::cout << "Cows = " << bullCowCount.Cows << std::endl;
@@ -72,15 +72,39 @@ void playGame() {
     
 }
 
-// ask for a guess, read it in, then return it
-FText getGuess() {
+// loop continually until the user gives a valid guess
+FText getValidGuess() {
     
-    FText Guess = "";
-    int32 currentTry = BCGame.getCurrentTry();
+    // initialize to invalid status
+    EGuessStatus Status = EGuessStatus::Invalid_Status;
+    FText guess = "";
     
-    std::cout << "Try " << currentTry << ". Enter your guess: ";
-    std::getline(std::cin, Guess);
+    do {
+        // prompt for guess and store input
+        int32 currentTry = BCGame.getCurrentTry();
+        std::cout << "Try " << currentTry << ". Enter your guess: ";
+        std::getline(std::cin, guess);
+        
+        // check guess validity
+        Status = BCGame.checkGuessValidity(guess);
+        switch (Status) {
+            case EGuessStatus::Wrong_Length:
+                std::cout << "Please enter a " << BCGame.getHiddenWordLength() << " letter word." << std::endl;
+                break;
+            case EGuessStatus::Not_Isogram:
+                std::cout << "Please enter a word without repeating letters." << std::endl;
+                break;
+            case EGuessStatus::Not_Lowercase:
+                std::cout << "Please enter all lowercase letters." << std::endl;
+                break;
+            default:
+                break;
+        }
+    } while (Status != EGuessStatus::OK);
     
-    return Guess;
-    
+    return guess;
+}
+
+void print(FString str) {
+    std::cout << str << std::endl;
 }

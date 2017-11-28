@@ -7,9 +7,9 @@
 //
 #pragma once
 
-using FString = std::string;
+using FText = std::string;
 
 void printIntro();
-FString getGuess();
+FText getValidGuess();
 void playGame();
 bool askToPlayAgain();
