@@ -13,3 +13,4 @@ void printIntro();
 FText getValidGuess();
 void playGame();
 bool askToPlayAgain();
+void printGameSummary();

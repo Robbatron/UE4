@@ -8,15 +8,18 @@
 // This is the console executable that makes use of the BullCow class.
 // This acts as the view in a MVC pattern, and is responsible for all user interaction.
 // For game logic, see the FBullCowGame class.
+#pragma once
+
 #include <iostream>
 #include <string>
 #include "main.hpp"
 #include "FBullCowGame.hpp"
 
+// to make syntax Unreal friendly
 using FText = std::string;
 using int32 = int;
 
-FBullCowGame BCGame; // instantiate a new game
+FBullCowGame BCGame; // instantiate a new game to be reused across plays
 
 int main() {
     
@@ -33,7 +36,7 @@ bool askToPlayAgain() {
     
     FText answer = "";
     
-    std::cout << "Would you like to play again? (y or n): ";
+    std::cout << "\nWould you like to play again with the same word? (y or n): ";
     getline(std::cin, answer);
     
     BCGame.reset();
@@ -56,9 +59,11 @@ void playGame() {
     BCGame.reset();
     
     int maxTries = BCGame.getMaxTries();
-    std::cout << maxTries << std::endl;
     
-    for (int32 i = 1; i <= maxTries; i++) {
+    // loop asking for guesses while the game is NOT won
+    // and there are still tries remaining
+    while (!BCGame.isGameWon() && BCGame.getCurrentTry() <= maxTries) {
+    
         FText guess = getValidGuess();
         
         // submit valid guess
@@ -66,11 +71,28 @@ void playGame() {
         // print numbers of bulls and cows
         std::cout << "Bulls = " << bullCowCount.Bulls << std::endl;
         std::cout << "Cows = " << bullCowCount.Cows << std::endl;
+        
+        int32 triesLeft = (BCGame.getMaxTries() - BCGame.getCurrentTry()) + 1;
+        
+        if (triesLeft > 1) {
+            std::cout << triesLeft << " tries left." << std::endl;
+        } else if (triesLeft > 0){
+            std::cout << triesLeft << " try left." << std::endl;
+        }
+        
     }
     
-    // TODO: add a game summary
-    
+    printGameSummary();
+    return;
 }
+
+void printGameSummary() {
+    if (BCGame.isGameWon()) {
+        std::cout << "\nGood job!\n" << std::endl;
+    } else {
+        std::cout << "\nBetter luck next time!\n" << std::endl;
+    }
+};
 
 // loop continually until the user gives a valid guess
 FText getValidGuess() {
@@ -82,7 +104,8 @@ FText getValidGuess() {
     do {
         // prompt for guess and store input
         int32 currentTry = BCGame.getCurrentTry();
-        std::cout << "Try " << currentTry << ". Enter your guess: ";
+        
+        std::cout << "\nTry " << currentTry << ". Enter your guess: ";
         std::getline(std::cin, guess);
         
         // check guess validity
@@ -105,6 +128,4 @@ FText getValidGuess() {
     return guess;
 }
 
-void print(FString str) {
-    std::cout << str << std::endl;
-}
+
